@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Tracker - Improved Design</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#E3F2FD',
+                            500: '#1976D2',
+                            600: '#1565C0',
+                            700: '#0D47A1'
+                        },
+                        secondary: {
+                            50: '#E8F5E8',
+                            500: '#388E3C',
+                            600: '#2E7D32'
+                        },
+                        accent: {
+                            500: '#FF5722',
+                            600: '#E64A19'
+                        }
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-inter">
+    <!-- @COMPONENT: AppLayout -->
+    <div class="flex h-screen overflow-hidden">
+        <!-- @COMPONENT: Sidebar -->
+        <div class="hidden md:flex md:w-64 md:flex-col">
+            <div class="flex flex-col flex-grow pt-5 overflow-y-auto bg-white border-r border-gray-200">
+                <!-- Logo/Brand -->
+                <div class="flex items-center flex-shrink-0 px-4">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-clipboard-list text-white text-sm"></i>
+                        </div>
+                        <span class="ml-3 text-xl font-semibold text-gray-900">MeetingTracker</span>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="mt-8 flex-1 px-2 space-y-1">
+                    <div data-tab="dashboard" class="bg-primary-50 border-r-2 border-primary-500 text-primary-700 cursor-pointer group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                        <i class="fas fa-tachometer-alt text-primary-500 mr-3 text-sm"></i>
+                        Dashboard
+                    </div>
+                    <div data-tab="actions" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 cursor-pointer group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                        <i class="fas fa-tasks text-gray-400 group-hover:text-gray-500 mr-3 text-sm"></i>
+                        Action Items
+                        <span class="ml-auto bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full" data-mock="true">12</span>
+                    </div>
+                    <div data-tab="meetings" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 cursor-pointer group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                        <i class="fas fa-calendar-alt text-gray-400 group-hover:text-gray-500 mr-3 text-sm"></i>
+                        Meetings
+                        <span class="ml-auto bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full" data-mock="true">8</span>
+                    </div>
+                    <div data-tab="employees" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 cursor-pointer group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                        <i class="fas fa-users text-gray-400 group-hover:text-gray-500 mr-3 text-sm"></i>
+                        Team Members
+                    </div>
+                    <div data-tab="analytics" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 cursor-pointer group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                        <i class="fas fa-chart-bar text-gray-400 group-hover:text-gray-500 mr-3 text-sm"></i>
+                        Analytics
+                    </div>
+                </nav>
+
+                <!-- Settings -->
+                <div class="flex-shrink-0 border-t border-gray-200 p-4">
+                    <div data-tab="settings" class="text-gray-600 hover:bg-gray-50 hover:text-gray-900 cursor-pointer group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                        <i class="fas fa-cog text-gray-400 group-hover:text-gray-500 mr-3 text-sm"></i>
+                        Settings
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: Sidebar -->
+
+        <!-- @COMPONENT: MainContent -->
+        <div class="flex flex-col w-0 flex-1 overflow-hidden">
+            <!-- @COMPONENT: TopBar -->
+            <div class="relative z-10 flex-shrink-0 flex h-16 bg-white shadow-sm border-b border-gray-200">
+                <button class="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 md:hidden">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+                <div class="flex-1 px-4 flex justify-between items-center">
+                    <div class="flex-1 flex">
+                        <div class="w-full flex md:ml-0">
+                            <div class="relative w-full text-gray-400 focus-within:text-gray-600">
+                                <div class="absolute inset-y-0 left-0 flex items-center pointer-events-none">
+                                    <i class="fas fa-search text-sm"></i>
+                                </div>
+                                <input data-mock="true" class="block w-full h-full pl-8 pr-3 py-2 border-transparent text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-0 focus:border-transparent" placeholder="Search meetings, actions, or team members..." type="search">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ml-4 flex items-center md:ml-6 space-x-3">
+                        <!-- Notifications -->
+                        <button class="p-2 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 relative">
+                            <i class="fas fa-bell text-lg"></i>
+                            <span class="absolute -top-1 -right-1 h-4 w-4 bg-accent-500 text-white text-xs rounded-full flex items-center justify-center" data-mock="true">3</span>
+                        </button>
+                        
+                        <!-- Profile -->
+                        <div class="relative">
+                            <button class="max-w-xs bg-white flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                <div class="h-8 w-8 rounded-full bg-primary-500 flex items-center justify-center text-white text-sm font-medium">
+                                    JD
+                                </div>
+                                <span class="hidden md:block ml-2 text-gray-700 text-sm font-medium" data-mock="true">John Doe</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: TopBar -->
+
+            <!-- @COMPONENT: DashboardContent -->
+            <main class="flex-1 relative overflow-y-auto focus:outline-none">
+                <div class="py-6">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+                        <!-- Page Header -->
+                        <div class="md:flex md:items-center md:justify-between mb-6">
+                            <div class="flex-1 min-w-0">
+                                <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                                    Dashboard
+                                </h1>
+                                <p class="mt-1 text-sm text-gray-500">
+                                    Track your meetings and action items in one place
+                                </p>
+                            </div>
+                            <div class="mt-4 flex md:mt-0 md:ml-4 space-x-3">
+                                <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                    <i class="fas fa-download mr-2 text-sm"></i>
+                                    Export
+                                </button>
+                                <button class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                    <i class="fas fa-plus mr-2 text-sm"></i>
+                                    New Meeting
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Stats Cards -->
+                        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+                            <!-- @COMPONENT: StatsCard -->
+                            <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200">
+                                <div class="p-5">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0">
+                                            <div class="w-8 h-8 bg-primary-100 rounded-md flex items-center justify-center">
+                                                <i class="fas fa-tasks text-primary-600 text-sm"></i>
+                                            </div>
+                                        </div>
+                                        <div class="ml-5 w-0 flex-1">
+                                            <dl>
+                                                <dt class="text-sm font-medium text-gray-500 truncate">Active Actions</dt>
+                                                <dd class="text-lg font-semibold text-gray-900" data-mock="true">12</dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200">
+                                <div class="p-5">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0">
+                                            <div class="w-8 h-8 bg-secondary-100 rounded-md flex items-center justify-center">
+                                                <i class="fas fa-calendar-alt text-secondary-600 text-sm"></i>
+                                            </div>
+                                        </div>
+                                        <div class="ml-5 w-0 flex-1">
+                                            <dl>
+                                                <dt class="text-sm font-medium text-gray-500 truncate">This Week's Meetings</dt>
+                                                <dd class="text-lg font-semibold text-gray-900" data-mock="true">8</dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200">
+                                <div class="p-5">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0">
+                                            <div class="w-8 h-8 bg-accent-100 rounded-md flex items-center justify-center">
+                                                <i class="fas fa-clock text-accent-600 text-sm"></i>
+                                            </div>
+                                        </div>
+                                        <div class="ml-5 w-0 flex-1">
+                                            <dl>
+                                                <dt class="text-sm font-medium text-gray-500 truncate">Overdue Items</dt>
+                                                <dd class="text-lg font-semibold text-gray-900" data-mock="true">3</dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200">
+                                <div class="p-5">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0">
+                                            <div class="w-8 h-8 bg-green-100 rounded-md flex items-center justify-center">
+                                                <i class="fas fa-users text-green-600 text-sm"></i>
+                                            </div>
+                                        </div>
+                                        <div class="ml-5 w-0 flex-1">
+                                            <dl>
+                                                <dt class="text-sm font-medium text-gray-500 truncate">Team Members</dt>
+                                                <dd class="text-lg font-semibold text-gray-900" data-mock="true">15</dd>
+                                            </dl>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- @END_COMPONENT: StatsCard -->
+                        </div>
+
+                        <!-- Main Content Grid -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Priority Actions -->
+                            <!-- @COMPONENT: PriorityActions -->
+                            <div class="lg:col-span-2">
+                                <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+                                    <div class="px-6 py-4 border-b border-gray-200">
+                                        <div class="flex items-center justify-between">
+                                            <h3 class="text-lg font-medium text-gray-900">Priority Action Items</h3>
+                                            <button class="text-primary-600 hover:text-primary-500 text-sm font-medium">
+                                                View All
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="divide-y divide-gray-200">
+                                        <!-- @MAP: priorityActions.map(action => ( -->
+                                        <div class="p-6 hover:bg-gray-50 transition-colors duration-150">
+                                            <div class="flex items-start space-x-3">
+                                                <div class="flex-shrink-0">
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800" data-mock="true">
+                                                        High
+                                                    </span>
+                                                </div>
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="text-sm font-medium text-gray-900" data-mock="true">
+                                                        Submit training budget proposal
+                                                    </p>
+                                                    <p class="text-sm text-gray-500 mt-1" data-mock="true">
+                                                        Assigned to: Me • From: Sarah Johnson
+                                                    </p>
+                                                    <div class="mt-2 flex items-center space-x-2">
+                                                        <button class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-white bg-secondary-600 hover:bg-secondary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary-500">
+                                                            Mark Complete
+                                                        </button>
+                                                        <button class="text-primary-600 hover:text-primary-500 text-xs font-medium">
+                                                            View Meeting
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-shrink-0">
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800" data-mock="true">
+                                                        In Progress
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-6 hover:bg-gray-50 transition-colors duration-150">
+                                            <div class="flex items-start space-x-3">
+                                                <div class="flex-shrink-0">
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800" data-mock="true">
+                                                        Medium
+                                                    </span>
+                                                </div>
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="text-sm font-medium text-gray-900" data-mock="true">
+                                                        Schedule architecture review meeting
+                                                    </p>
+                                                    <p class="text-sm text-gray-500 mt-1" data-mock="true">
+                                                        Assigned to: Sarah Johnson • From: Q1 Planning Meeting
+                                                    </p>
+                                                    <div class="mt-2 flex items-center space-x-2">
+                                                        <button class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                                            Update Status
+                                                        </button>
+                                                        <button class="text-primary-600 hover:text-primary-500 text-xs font-medium">
+                                                            View Meeting
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-shrink-0">
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800" data-mock="true">
+                                                        Pending
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-6 hover:bg-gray-50 transition-colors duration-150">
+                                            <div class="flex items-start space-x-3">
+                                                <div class="flex-shrink-0">
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800" data-mock="true">
+                                                        Medium
+                                                    </span>
+                                                </div>
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="text-sm font-medium text-gray-900" data-mock="true">
+                                                        Complete project management certification
+                                                    </p>
+                                                    <p class="text-sm text-gray-500 mt-1" data-mock="true">
+                                                        Assigned to: Mike Chen • From: Performance Review
+                                                    </p>
+                                                    <div class="mt-2 flex items-center space-x-2">
+                                                        <button class="inline-flex items-center px-2.5 py-1.5 border border-gray-300 text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                                            Update Status
+                                                        </button>
+                                                        <button class="text-primary-600 hover:text-primary-500 text-xs font-medium">
+                                                            View Meeting
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-shrink-0">
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800" data-mock="true">
+                                                        In Progress
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- @END_MAP )) -->
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- @END_COMPONENT: PriorityActions -->
+
+                            <!-- Sidebar Widgets -->
+                            <div class="space-y-6">
+                                <!-- Recent Meetings -->
+                                <!-- @COMPONENT: RecentMeetings -->
+                                <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+                                    <div class="px-6 py-4 border-b border-gray-200">
+                                        <h3 class="text-lg font-medium text-gray-900">Recent Meetings</h3>
+                                    </div>
+                                    <div class="divide-y divide-gray-200">
+                                        <!-- @MAP: recentMeetings.map(meeting => ( -->
+                                        <div class="p-4 hover:bg-gray-50 cursor-pointer">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="flex-shrink-0">
+                                                    <div class="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+                                                        <span class="text-primary-600 text-xs font-medium" data-mock="true">SJ</span>
+                                                    </div>
+                                                </div>
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="text-sm font-medium text-gray-900" data-mock="true">Q1 Planning Meeting</p>
+                                                    <p class="text-sm text-gray-500" data-mock="true">Sarah Johnson • Jan 15</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-4 hover:bg-gray-50 cursor-pointer">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="flex-shrink-0">
+                                                    <div class="w-8 h-8 bg-secondary-100 rounded-full flex items-center justify-center">
+                                                        <span class="text-secondary-600 text-xs font-medium" data-mock="true">MC</span>
+                                                    </div>
+                                                </div>
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="text-sm font-medium text-gray-900" data-mock="true">Performance Review</p>
+                                                    <p class="text-sm text-gray-500" data-mock="true">Mike Chen • Jan 16</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="p-4 hover:bg-gray-50 cursor-pointer">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="flex-shrink-0">
+                                                    <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                                                        <span class="text-purple-600 text-xs font-medium" data-mock="true">AK</span>
+                                                    </div>
+                                                </div>
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="text-sm font-medium text-gray-900" data-mock="true">Sprint Retrospective</p>
+                                                    <p class="text-sm text-gray-500" data-mock="true">Alex Kim • Jan 12</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- @END_MAP )) -->
+                                    </div>
+                                    <div class="px-6 py-3 border-t border-gray-200">
+                                        <button class="text-primary-600 hover:text-primary-500 text-sm font-medium w-full text-center">
+                                            View All Meetings
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- @END_COMPONENT: RecentMeetings -->
+
+                                <!-- Quick Actions -->
+                                <!-- @COMPONENT: QuickActions -->
+                                <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+                                    <div class="px-6 py-4 border-b border-gray-200">
+                                        <h3 class="text-lg font-medium text-gray-900">Quick Actions</h3>
+                                    </div>
+                                    <div class="p-6 space-y-3">
+                                        <button class="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                            <i class="fas fa-plus mr-2 text-sm"></i>
+                                            New Meeting
+                                        </button>
+                                        <button class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                            <i class="fas fa-user-plus mr-2 text-sm"></i>
+                                            Add Team Member
+                                        </button>
+                                        <button class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                            <i class="fas fa-file-export mr-2 text-sm"></i>
+                                            Export Data
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- @END_COMPONENT: QuickActions -->
+
+                                <!-- Upcoming Reminders -->
+                                <!-- @COMPONENT: UpcomingReminders -->
+                                <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+                                    <div class="px-6 py-4 border-b border-gray-200">
+                                        <h3 class="text-lg font-medium text-gray-900">Upcoming Reminders</h3>
+                                    </div>
+                                    <div class="p-6">
+                                        <div class="space-y-3">
+                                            <div class="flex items-start space-x-3">
+                                                <div class="flex-shrink-0">
+                                                    <div class="w-2 h-2 bg-red-400 rounded-full mt-2"></div>
+                                                </div>
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="text-sm font-medium text-gray-900" data-mock="true">Budget proposal due</p>
+                                                    <p class="text-xs text-gray-500" data-mock="true">Tomorrow, 5:00 PM</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start space-x-3">
+                                                <div class="flex-shrink-0">
+                                                    <div class="w-2 h-2 bg-yellow-400 rounded-full mt-2"></div>
+                                                </div>
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="text-sm font-medium text-gray-900" data-mock="true">Weekly 1:1 with Sarah</p>
+                                                    <p class="text-xs text-gray-500" data-mock="true">Friday, 2:00 PM</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start space-x-3">
+                                                <div class="flex-shrink-0">
+                                                    <div class="w-2 h-2 bg-blue-400 rounded-full mt-2"></div>
+                                                </div>
+                                                <div class="min-w-0 flex-1">
+                                                    <p class="text-sm font-medium text-gray-900" data-mock="true">Team retrospective</p>
+                                                    <p class="text-xs text-gray-500" data-mock="true">Next week</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- @END_COMPONENT: UpcomingReminders -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <!-- @END_COMPONENT: DashboardContent -->
+        </div>
+        <!-- @END_COMPONENT: MainContent -->
+    </div>
+    <!-- @END_COMPONENT: AppLayout -->
+
+    <!-- @COMPONENT: NewMeetingModal (Hidden by default) -->
+    <div class="fixed inset-0 z-50 overflow-y-auto hidden" id="new-meeting-modal">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                <div>
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-primary-100">
+                        <i class="fas fa-calendar-plus text-primary-600 text-xl"></i>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-5">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">
+                            Create New Meeting
+                        </h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">
+                                Add a new meeting record with notes and action items.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <form class="mt-5 sm:mt-6 space-y-4">
+                    <div>
+                        <label for="meeting-title" class="block text-sm font-medium text-gray-700">Meeting Title</label>
+                        <input type="text" name="meeting-title" id="meeting-title" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm" placeholder="e.g., Q1 Planning Session" data-mock="true">
+                    </div>
+                    <div>
+                        <label for="team-member" class="block text-sm font-medium text-gray-700">Team Member</label>
+                        <select id="team-member" name="team-member" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm" data-mock="true">
+                            <option>Sarah Johnson</option>
+                            <option>Mike Chen</option>
+                            <option>Alex Kim</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="meeting-date" class="block text-sm font-medium text-gray-700">Date</label>
+                        <input type="date" name="meeting-date" id="meeting-date" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm" data-mock="true">
+                    </div>
+                    <div>
+                        <label for="meeting-notes" class="block text-sm font-medium text-gray-700">Notes</label>
+                        <textarea id="meeting-notes" name="meeting-notes" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500 sm:text-sm" placeholder="Meeting notes (supports Markdown)..." data-mock="true"></textarea>
+                        <p class="mt-1 text-xs text-gray-500">Supports Markdown formatting</p>
+                    </div>
+                </form>
+                <div class="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
+                    <button type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:col-start-2 sm:text-sm">
+                        Create Meeting
+                    </button>
+                    <button type="button" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:mt-0 sm:col-start-1 sm:text-sm">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: NewMeetingModal -->
+
+    <!-- Status Message (Notification Toast) -->
+    <!-- @COMPONENT: StatusToast -->
+    <div class="fixed bottom-4 right-4 z-50 hidden" id="status-toast">
+        <div class="bg-white rounded-lg shadow-lg border border-gray-200 p-4 max-w-sm">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-check-circle text-green-500"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-gray-900" id="status-message" data-mock="true">
+                        Status message will appear here
+                    </p>
+                </div>
+                <div class="ml-4 flex-shrink-0">
+                    <button class="inline-flex text-gray-400 hover:text-gray-500 focus:outline-none">
+                        <i class="fas fa-times text-sm"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: StatusToast -->
+
+    <script>
+    (function() {
+        // TODO: Implement React component state management and routing
+        // TODO: Add proper form validation and submission handling
+        // TODO: Implement data persistence and API integration
+        // TODO: Add keyboard shortcuts and accessibility features
+        
+        // Simple demo interactions for the mockup
+        const tabs = document.querySelectorAll('[data-tab]');
+        const modal = document.getElementById('new-meeting-modal');
+        const statusToast = document.getElementById('status-toast');
+        
+        // Tab switching simulation
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                tabs.forEach(t => {
+                    t.classList.remove('bg-primary-50', 'border-r-2', 'border-primary-500', 'text-primary-700');
+                    t.classList.add('text-gray-600', 'hover:bg-gray-50', 'hover:text-gray-900');
+                });
+                
+                // Add active class to clicked tab
+                this.classList.add('bg-primary-50', 'border-r-2', 'border-primary-500', 'text-primary-700');
+                this.classList.remove('text-gray-600', 'hover:bg-gray-50', 'hover:text-gray-900');
+                
+                console.log(`Switched to ${this.dataset.tab} tab`);
+            });
+        });
+        
+        // New meeting button simulation
+        const newMeetingBtns = document.querySelectorAll('button:contains("New Meeting")');
+        document.addEventListener('click', function(e) {
+            if (e.target.textContent.includes('New Meeting')) {
+                modal?.classList.remove('hidden');
+                console.log('Opening new meeting modal');
+            }
+            
+            if (e.target.textContent.includes('Cancel') || e.target.textContent.includes('Create Meeting')) {
+                modal?.classList.add('hidden');
+                if (e.target.textContent.includes('Create Meeting')) {
+                    showStatusMessage('✅ Meeting created successfully!');
+                }
+            }
+            
+            if (e.target.textContent.includes('Mark Complete')) {
+                e.target.textContent = 'Completed';
+                e.target.classList.remove('bg-secondary-600', 'hover:bg-secondary-700');
+                e.target.classList.add('bg-gray-400', 'cursor-not-allowed');
+                e.target.disabled = true;
+                showStatusMessage('✅ Action marked as complete!');
+            }
+        });
+        
+        function showStatusMessage(message) {
+            const messageEl = document.getElementById('status-message');
+            if (messageEl) {
+                messageEl.textContent = message;
+                statusToast?.classList.remove('hidden');
+                setTimeout(() => {
+                    statusToast?.classList.add('hidden');
+                }, 3000);
+            }
+        }
+        
+        // Close status toast
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('#status-toast .fas.fa-times')) {
+                statusToast?.classList.add('hidden');
+            }
+        });
+        
+        // Mock search functionality
+        const searchInput = document.querySelector('input[type="search"]');
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                console.log(`Searching for: ${e.target.value}`);
+                // TODO: Implement actual search filtering
+            });
+        }
+    })();
+    </script>
+</body>
+</html>
